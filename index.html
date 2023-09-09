@@ -8,6 +8,10 @@
             display: none;
             height: 300px;
         }
+
+        * {
+            margin-bottom: 20px;
+        }
     </style>
     <script>
 
@@ -63,17 +67,13 @@
 </head>
 
 <body>
-    Score: <p id="score">0</p>
-    <br>
-
-    <img id="imageToGuess" src="" alt="dog image goes here" />
-    <br>
-
-    <input id="guessDogBreedInput" placeholder="Guess dog breed and click guess button" />
-    <br>
-    <button onclick="guessBreed()">Guess</button>
-    <br>
-    <button onclick="startGame()">Start</button>
+    <div class="container">
+        Score: <p id="score">0</p>
+        <img id="imageToGuess" src="" alt="dog image goes here" class="img-fluid"/>
+        <input id="guessDogBreedInput" placeholder="Guess dog breed and click guess button" class="form-control"/>
+        <button type="button" class="btn btn-primary" onclick="guessBreed()">Guess</button>
+        <button type="button" class="btn btn-primary" onclick="startGame()">Start</button>
+    </div>
 </body>
 
 </html>
