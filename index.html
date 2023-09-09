@@ -20,7 +20,8 @@
         let imageToGuess;
         let gameStarted = false
         let isGuessing = false
-        let score = 0
+        let score;
+        const duration = 30
 
         window.onload = init()
 
@@ -35,28 +36,69 @@
             return breedName
         }
 
+        async function imageExists(imageUrl) {
+            try {
+                const imageUrlResponse = await fetch(imageUrl)
+            }
+            catch (exception) {
+                return false;
+            }
+            return true
+        }
+
         async function getRandomImageByBreed(breed) {
             const imagesResponse = await fetch(`https://dog.ceo/api/breed/${breed}/images/random`)
             const imagesJson = await imagesResponse.json()
             const imagePath = imagesJson.message
-            console.log(imagePath)
             return imagePath
         }
 
         async function loadNewDog() {
+            document.getElementById('helperText').innerText = ''
             breedToGuess = await getRandomBreedName().trim()
             imageToGuess = await getRandomImageByBreed(breedToGuess)
-            document.getElementById('imageToGuess').src = imageToGuess
+            if (await imageExists(imageToGuess)) {
+                document.getElementById('imageToGuess').src = imageToGuess
+            }
+            else {
+                loadNewDog()
+            }
+        }
+
+        function msToSeconds(ms) {
+            return ms / 1000
+        }
+
+        function secondsToMs(sec) {
+            return sec * 1000
+        }
+
+        function decrementTime() {
+            timeLeft -= 1
+            document.getElementById('timeLeft').innerText = timeLeft
         }
 
         async function startGame() {
             score = 0
+            timeLeft = duration
             document.getElementById('score').innerText = score
+            document.getElementById('timeLeft').innerText = timeLeft
             gameStarted = true
+            document.getElementById("startButton").disabled = true
             await loadNewDog()
             document.getElementById("imageToGuess").style.display = 'inline'
+            const interval = setInterval(function() {
+                decrementTime()
+                if(timeLeft === 0) {
+                    clearInterval(interval)
+                    alert('Game Over')
+                }
+            }, secondsToMs(1))
         }
-    
+
+        async function pass() {
+            await loadNewDog()
+        }
 
         async function guessBreed() {
             const currentBreedGuess = document.getElementById('guessDogBreedInput').value.trim().toLowerCase()
@@ -66,7 +108,7 @@
                 document.getElementById('score').innerText = score
                 await loadNewDog()
             }
-            else if (currentBreedGuess.includes(breedToGuess) || breedToGuess.includes(currentBreedGuess)){
+            else if (currentBreedGuess.includes(breedToGuess) || breedToGuess.includes(currentBreedGuess)) {
                 document.getElementById('helperText').innerText = 'You are warm, keep guessing!'
             }
             else {
@@ -78,12 +120,14 @@
 
 <body>
     <div class="container">
-        Score: <p id="score">0</p>
-        <img id="imageToGuess" src="" alt="dog image goes here" class="img-fluid"/>
+        Score: <p id="score"></p>
+        Time left: <p id="timeLeft"></p>
+        <img id="imageToGuess" src="" alt="dog image goes here" class="img-fluid" />
         <p id="helperText"></p>
-        <input id="guessDogBreedInput" placeholder="Guess dog breed and click guess button" class="form-control"/>
+        <input id="guessDogBreedInput" placeholder="Guess dog breed and click guess button" class="form-control" />
         <button type="button" class="btn btn-primary" onclick="guessBreed()">Guess</button>
-        <button type="button" class="btn btn-primary" onclick="startGame()">Start</button>
+        <button type="button" class="btn btn-primary" onclick="pass()">Pass</button>
+        <button id="startButton" type="button" class="btn btn-primary" onclick="startGame()">Start</button>
     </div>
 </body>
 
