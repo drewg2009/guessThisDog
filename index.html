@@ -16,6 +16,14 @@
             height: 300px;
         }
 
+        #logo {
+            height: 50px;
+        }
+
+        #guessDogBreedInput {
+            margin-bottom: 20px;
+        }
+
         * {
             margin-bottom: 20px;
         }
@@ -131,9 +139,9 @@
 
 <body>
     <div class="container mx-auto p-2" style="width: 50%">
-        <h1 id="title">Guess My Breed</h1>
-        Score: <p id="score"></p>
-        Time left: <p id="timeLeft"></p>
+        <h1 id="title">Guess My Breed <img id="logo" class="img-fluid" src="paw.png" /></h1>
+        Score: <p id="score">0</p>
+        Time left: <p id="timeLeft">0</p>
         <img id="imageToGuess" src="" alt="dog image goes here" class="img-fluid" />
         <p id="helperText"></p>
         <input id="guessDogBreedInput" placeholder="Guess dog breed and click guess button" class="form-control" />
