@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<head>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-4bw+/aepP/YC94hEpVNVgiZdgIC5+VKNBQNGCHeKRQN+PtmoHDEXuppvnDJzQIu9" crossorigin="anonymous">
+    <style>
+        #imageToGuess {
+            display: none;
+            height: 300px;
+        }
+    </style>
+    <script>
+
+        let breedNamesList = []
+        let breedToGuess;
+        let imageToGuess;
+        let gameStarted = false
+        let isGuessing = false
+        let score = 0
+
+        window.onload = init()
+
+        async function init() {
+            const breedsResponse = await fetch('https://dog.ceo/api/breeds/list/all')
+            breedsJson = await breedsResponse.json()
+            breedNamesList = Object.keys(breedsJson.message)
+        }
+
+        function getRandomBreedName() {
+            var breedName = breedNamesList[Math.floor(Math.random() * breedNamesList.length)];
+            return breedName
+        }
+
+        async function getRandomImageByBreed(breed) {
+            const imagesResponse = await fetch(`https://dog.ceo/api/breed/${breed}/images/random`)
+            const imagesJson = await imagesResponse.json()
+            const imagePath = imagesJson.message
+            console.log(imagePath)
+            return imagePath
+        }
+
+        async function loadNewDog() {
+            breedToGuess = await getRandomBreedName()
+            imageToGuess = await getRandomImageByBreed(breedToGuess)
+            document.getElementById('imageToGuess').src = imageToGuess
+        }
+
+        async function startGame() {
+            gameStarted = true
+            await loadNewDog()
+            document.getElementById("imageToGuess").style.display = 'inline'
+        }
+
+        async function guessBreed() {
+            const currentBreedGuess = document.getElementById('guessDogBreedInput').value.trim()
+            if (currentBreedGuess === breedToGuess) {
+                await loadNewDog()
+                score++
+                document.getElementById('score').innerText = score
+            }
+        }
+    </script>
+</head>
+
+<body>
+    Score: <p id="score">0</p>
+    <br>
+
+    <img id="imageToGuess" src="" alt="dog image goes here"/>
+    <br>
+
+    <input id="guessDogBreedInput" placeholder="Guess dog breed and click guess button" />
+    <br>
+    <button onclick="guessBreed()">Guess</button>
+    <br>
+    <button onclick="startGame()">Start</button>
+</body>
+
+</html>
