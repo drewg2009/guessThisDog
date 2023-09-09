@@ -50,17 +50,27 @@
         }
 
         async function startGame() {
+            score = 0
+            document.getElementById('score').innerText = score
             gameStarted = true
             await loadNewDog()
             document.getElementById("imageToGuess").style.display = 'inline'
         }
+    
 
         async function guessBreed() {
             const currentBreedGuess = document.getElementById('guessDogBreedInput').value.trim().toLowerCase()
             if (currentBreedGuess === breedToGuess) {
-                await loadNewDog()
+                document.getElementById('helperText').innerText = ''
                 score++
                 document.getElementById('score').innerText = score
+                await loadNewDog()
+            }
+            else if (currentBreedGuess.includes(breedToGuess) || breedToGuess.includes(currentBreedGuess)){
+                document.getElementById('helperText').innerText = 'You are warm, keep guessing!'
+            }
+            else {
+                document.getElementById('helperText').innerText = 'Cold, try again!'
             }
         }
     </script>
@@ -70,6 +80,7 @@
     <div class="container">
         Score: <p id="score">0</p>
         <img id="imageToGuess" src="" alt="dog image goes here" class="img-fluid"/>
+        <p id="helperText"></p>
         <input id="guessDogBreedInput" placeholder="Guess dog breed and click guess button" class="form-control"/>
         <button type="button" class="btn btn-primary" onclick="guessBreed()">Guess</button>
         <button type="button" class="btn btn-primary" onclick="startGame()">Start</button>
