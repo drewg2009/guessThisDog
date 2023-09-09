@@ -1,2 +1,3 @@
 # guessThisDog
-guess the dog breed
+
+simple game to guess dog breed
