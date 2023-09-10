@@ -49,6 +49,22 @@
     <script>
 
         let breedNamesList = []
+        const hintTypes = ['first3Letters', 'last3Letters']
+        const hintTypeDataObjects = {
+            'first3Letters': {
+                message: 'Hint: The first 3 letters are ',
+                getHint: function (str) {
+                    return str.substring(0, 3)
+                }
+            },
+            'last3Letters': {
+                message: 'Hint: The last 3 letters are ',
+                getHint: function (str) {
+                    return str.substring(str.length - 3, str.length)
+                }
+            }
+        }
+        let currentHint;
         let breedToGuess;
         let imageToGuess;
         let gameStarted = false
@@ -142,6 +158,19 @@
             await loadNewDog()
         }
 
+        function showHint() {
+            const randomHintType = hintTypes[Math.floor(Math.random() * hintTypes.length)];
+            if (randomHintType === currentHint) {
+                showHint()
+            }
+            else {
+                currentHint = randomHintType
+                const hintObject = hintTypeDataObjects[randomHintType]
+                document.getElementById("helperText").textContent = hintObject.message + `"${hintObject.getHint(breedToGuess)}"`
+            }
+
+        }
+
         async function guessBreed() {
             const currentBreedGuess = document.getElementById('guessDogBreedInput').value.trim().toLowerCase()
             if (currentBreedGuess === breedToGuess) {
@@ -191,13 +220,16 @@
                 </div>
             </div>
             <div id="actionsWhilePlayingRow" class="row">
-                <div class="col-4">
+                <div class="col-3">
                     <button id="guessButton" type="button" class="btn btn-primary" onclick="guessBreed()">Guess</button>
                 </div>
-                <div class="col-4">
+                <div class="col-3">
                     <button id="passButton" type="button" class="btn btn-primary" onclick="pass()">Pass</button>
                 </div>
-                <div class="col-4">
+                <div class="col-3">
+                    <button id="Hint" type="button" class="btn btn-primary" onclick="showHint()">Hint</button>
+                </div>
+                <div class="col-3">
                     <button id="startButton2" type="button" class="btn btn-primary startButton"
                         onclick="startGame()">Start</button>
                 </div>
