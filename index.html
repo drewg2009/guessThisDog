@@ -105,6 +105,7 @@
         }
 
         async function loadNewDog() {
+            currentHint = ''
             document.getElementById('helperText').innerText = ''
             breedToGuess = await getRandomBreedName().trim()
             imageToGuess = await getRandomImageByBreed(breedToGuess)
