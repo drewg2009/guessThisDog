@@ -63,7 +63,6 @@ async function getRandomImageByBreed(breed) {
 
 async function loadNewDog() {
     currentHint = ''
-    document.getElementById('helperText').innerText = ''
     breedToGuess = await getRandomBreedName().trim()
     imageToGuess = await getRandomImageByBreed(breedToGuess)
     if (await imageExists(imageToGuess)) {
@@ -119,6 +118,7 @@ function endGame() {
 
 async function pass() {
     await loadNewDog()
+    document.getElementById('helperText').innerText = ''
 }
 
 function showHint() {
@@ -137,7 +137,10 @@ function showHint() {
 async function guessBreed() {
     const currentBreedGuess = document.getElementById('guessDogBreedInput').value.trim().toLowerCase()
     if (currentBreedGuess === breedToGuess) {
-        document.getElementById('helperText').innerText = ''
+        document.getElementById('helperText').innerText = 'Correct, nice job!'
+        setTimeout(function() {
+            document.getElementById('helperText').innerText = ''
+        }, secondsToMs(1));
         score++
         document.getElementById('score').innerText = "Score: " + score
         await loadNewDog()
