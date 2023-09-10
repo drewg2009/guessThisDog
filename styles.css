@@ -5,7 +5,7 @@
 
 #imageToGuess {
     display: none;
-    height: 300px;
+    height: 200px;
 }
 
 #logo {
@@ -14,10 +14,6 @@
 
 #guessDogBreedInput {
     margin-bottom: 20px;
-}
-
-#mainContainer {
-    width: 75%;
 }
 
 #guessDogBreedInputLabel {
@@ -37,6 +33,19 @@
     display: none;
 }
 
-#helperText {
+#score {
     margin-top: 20px;
+    font-weight: bold;
+}
+
+#timeLeft {
+    font-weight: bold;
+}
+
+#helperText {
+    font-weight: bold;
+}
+
+#zoomedImage {
+    width: 100%;
 }

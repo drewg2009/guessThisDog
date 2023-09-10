@@ -13,12 +13,11 @@
 
 <body>
     <div id="mainContainer" class="container-fluid mx-auto p-2 text-center">
-        <div class="row">
-            <div class="col">
-                <h1 id="title">Guess My Breed <img id="logo" class="img-fluid" src="paw.png" />
-                </h1>
+        <nav class="navbar navbar-expand-lg navbar-light bg-light">
+            <div class="container-fluid">
+              <a class="navbar-brand" href="#">Guess My Breed <img id="logo" src="paw.png" /></a>
             </div>
-        </div>
+          </nav>
         <div class="row">
             <div class="col">
                 <p id="score">Score: 0</p>
@@ -42,29 +41,33 @@
             </div>
             <div id="actionsBeforePlayingRow" class="row">
                 <div class="col">
-                    <button id="startButton1" type="button" class="btn btn-success startButton"
+                    <button id="startButton1" type="button" class="btn btn-success startButton fs-4"
                         onclick="startGame()">Start</button>
                 </div>
             </div>
             <div id="actionsWhilePlayingRow" class="row gy-2">
                 <div class="col">
-                    <button id="guessButton" type="button" class="btn btn-primary" onclick="guessBreed()">Guess</button>
+                    <button id="guessButton" type="button" class="btn btn-primary fs-4" onclick="guessBreed()">Guess</button>
                 </div>
                 <div class="col">
-                    <button id="passButton" type="button" class="btn btn-secondary" onclick="pass()">Pass</button>
+                    <button id="passButton" type="button" class="btn btn-secondary fs-4" onclick="pass()">Pass</button>
                 </div>
                 <div class="col">
-                    <button id="Hint" type="button" class="btn btn-info" onclick="showHint()">Hint</button>
+                    <button id="hint" type="button" class="btn btn-info fs-4" onclick="showHint()">Hint</button>
                 </div>
                 <div class="col">
-                    <button id="startButton2" type="button" class="btn btn-success startButton"
+                    <button id="startButton2" type="button" class="btn btn-success startButton fs-4"
                         onclick="startGame()">Start</button>
+                </div>
+                <div class="col">
+                    <button id="zoom" type="button" class="btn btn-success fs-4"
+                        onclick="zoom()">Zoom</button>
                 </div>
             </div>
         </div>
     </div>
     </div>
-    <div id="myModal" class="modal" tabindex="-1">
+    <div id="gameOverModal" class="modal" tabindex="-1">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
@@ -76,8 +79,19 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    <!-- <button type="button" class="btn btn-primary">Save score</button> -->
                     <button type="button" class="btn btn-primary" onclick="startGame()">Play Again!</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="zoomModal" class="modal" tabindex="-1">
+        <div class="modal-dialog modal-fullscreen">
+            <div class="modal-content">
+                <div class="modal-body">
+                    <img id="zoomedImage" />
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                 </div>
             </div>
         </div>

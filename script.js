@@ -22,7 +22,11 @@ let gameStarted = false
 let isGuessing = false
 let score;
 const duration = 30
-let myModal;
+let gameOverModal;
+let zoomModalElement;
+let zoomModal;
+let gameInterval;
+
 
 window.onload = init()
 
@@ -30,7 +34,9 @@ async function init() {
     const breedsResponse = await fetch('https://dog.ceo/api/breeds/list/all')
     breedsJson = await breedsResponse.json()
     breedNamesList = Object.keys(breedsJson.message)
-    myModal = new bootstrap.Modal('#myModal', { keyboard: false })
+    gameOverModal = new bootstrap.Modal('#gameOverModal', { keyboard: false })
+    zoomModalElement = document.getElementById('zoomModal')
+    zoomModal = new bootstrap.Modal(zoomModalElement)
 }
 
 function getRandomBreedName() {
@@ -82,7 +88,7 @@ function decrementTime() {
 }
 
 async function startGame() {
-    myModal.hide()
+    gameOverModal.hide()
     score = 0
     timeLeft = duration
     document.getElementById('actionsBeforePlayingRow').style.display = 'none'
@@ -96,14 +102,19 @@ async function startGame() {
     }
     await loadNewDog()
     document.getElementById("imageToGuess").style.display = 'inline'
-    const interval = setInterval(function () {
+    gameInterval = setInterval(function () {
         decrementTime()
         if (timeLeft === 0) {
-            clearInterval(interval)
-            document.getElementById("finalScoreMessage").innerText = 'Final score: ' + score
-            myModal.show()
+            endGame()
         }
     }, secondsToMs(1))
+}
+
+function endGame() {
+    clearInterval(gameInterval)
+    document.getElementById("finalScoreMessage").innerText = 'Final score: ' + score
+    gameOverModal.show()
+    zoomModal.hide()
 }
 
 async function pass() {
@@ -137,4 +148,9 @@ async function guessBreed() {
     else {
         document.getElementById('helperText').innerText = 'Cold, try again!'
     }
+}
+
+function zoom() {
+    document.getElementById("zoomedImage").src = imageToGuess
+    zoomModal.show()
 }
