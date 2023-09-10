@@ -35,13 +35,15 @@
 
         #inputsContainer {
             position: fixed;
+            bottom: 0;
             left: 50%;
             transform: translateX(-50%);
             width: 80%;
+            margin-bottom: 20px;
         }
 
-        * {
-            margin-bottom: 20px;
+        #actionsWhilePlayingRow {
+            display: none;
         }
     </style>
     <script>
@@ -108,17 +110,22 @@
 
         function decrementTime() {
             timeLeft -= 1
-            document.getElementById('timeLeft').innerText = timeLeft
+            document.getElementById('timeLeft').innerText = "Time Left: " + timeLeft
         }
 
         async function startGame() {
             myModal.hide()
             score = 0
             timeLeft = duration
-            document.getElementById('score').innerText = score
-            document.getElementById('timeLeft').innerText = timeLeft
+            document.getElementById('actionsBeforePlayingRow').style.display = 'none'
+            document.getElementById('actionsWhilePlayingRow').style.display = 'flex'
+            document.getElementById('score').innerText = "Score: " + score
+            document.getElementById('timeLeft').innerText = "Time Left: " + timeLeft
             gameStarted = true
-            document.getElementById("startButton").disabled = true
+            const startButtons = document.getElementsByClassName("startButton")
+            for (let i = 0; i < startButtons.length; i++) {
+                startButtons[i].disabled = true
+            }
             await loadNewDog()
             document.getElementById("imageToGuess").style.display = 'inline'
             const interval = setInterval(function () {
@@ -140,7 +147,7 @@
             if (currentBreedGuess === breedToGuess) {
                 document.getElementById('helperText').innerText = ''
                 score++
-                document.getElementById('score').innerText = score
+                document.getElementById('score').innerText = "Score: " + score
                 await loadNewDog()
             }
             else if (currentBreedGuess.includes(breedToGuess) || breedToGuess.includes(currentBreedGuess)) {
@@ -156,11 +163,19 @@
 <body>
     <div id="mainContainer" class="container-fluid mx-auto p-2 text-center">
         <h1 id="title">Guess My Breed <img id="logo" class="img-fluid" src="paw.png" /></h1>
-        Score: <p id="score">0</p>
-        Time left: <p id="timeLeft">0</p>
+        <div class="row">
+            <div class="col">
+                <p id="score">Score: 0</p>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col">
+                <p id="timeLeft">Time Left: 0</p>
+            </div>
+        </div>
         <img id="imageToGuess" src="" alt="dog image goes here" class="img-fluid" />
         <p id="helperText"></p>
-        <div id="inputsContainer">
+        <div id="inputsContainer" class="container-fluid">
             <div class="row">
                 <div class="col">
                     <label id="guessDogBreedInputLabel" for="guessDogBreedInput">Guess dog breed and click guess
@@ -169,15 +184,22 @@
                         class="form-control" />
                 </div>
             </div>
-            <div class="row">
+            <div id="actionsBeforePlayingRow" class="row">
                 <div class="col">
-                    <button type="button" class="btn btn-primary" onclick="guessBreed()">Guess</button>
+                    <button id="startButton1" type="button" class="btn btn-primary startButton"
+                        onclick="startGame()">Start</button>
                 </div>
-                <div class="col">
-                    <button type="button" class="btn btn-primary" onclick="pass()">Pass</button>
+            </div>
+            <div id="actionsWhilePlayingRow" class="row">
+                <div class="col-4">
+                    <button id="guessButton" type="button" class="btn btn-primary" onclick="guessBreed()">Guess</button>
                 </div>
-                <div class="col">
-                    <button id="startButton" type="button" class="btn btn-primary" onclick="startGame()">Start</button>
+                <div class="col-4">
+                    <button id="passButton" type="button" class="btn btn-primary" onclick="pass()">Pass</button>
+                </div>
+                <div class="col-4">
+                    <button id="startButton2" type="button" class="btn btn-primary startButton"
+                        onclick="startGame()">Start</button>
                 </div>
             </div>
         </div>
