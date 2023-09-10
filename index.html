@@ -7,196 +7,18 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet"
         integrity="sha384-4bw+/aepP/YC94hEpVNVgiZdgIC5+VKNBQNGCHeKRQN+PtmoHDEXuppvnDJzQIu9" crossorigin="anonymous">
-    <style>
-        #title {
-            text-align: center;
-        }
-
-        #imageToGuess {
-            display: none;
-            height: 300px;
-        }
-
-        #logo {
-            height: 50px;
-        }
-
-        #guessDogBreedInput {
-            margin-bottom: 20px;
-        }
-
-        #mainContainer {
-            width: 75%;
-        }
-
-        #guessDogBreedInputLabel {
-            font-style: italic;
-        }
-
-        #inputsContainer {
-            position: fixed;
-            bottom: 0;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 80%;
-            margin-bottom: 20px;
-        }
-
-        #actionsWhilePlayingRow {
-            display: none;
-        }
-
-        #helperText {
-            margin-top: 20px;
-        }
-    </style>
-    <script>
-
-        let breedNamesList = []
-        const hintTypes = ['first3Letters', 'last3Letters']
-        const hintTypeDataObjects = {
-            'first3Letters': {
-                message: 'Hint: The first 3 letters are ',
-                getHint: function (str) {
-                    return str.substring(0, 3)
-                }
-            },
-            'last3Letters': {
-                message: 'Hint: The last 3 letters are ',
-                getHint: function (str) {
-                    return str.substring(str.length - 3, str.length)
-                }
-            }
-        }
-        let currentHint;
-        let breedToGuess;
-        let imageToGuess;
-        let gameStarted = false
-        let isGuessing = false
-        let score;
-        const duration = 30
-        let myModal;
-
-        window.onload = init()
-
-        async function init() {
-            const breedsResponse = await fetch('https://dog.ceo/api/breeds/list/all')
-            breedsJson = await breedsResponse.json()
-            breedNamesList = Object.keys(breedsJson.message)
-            myModal = new bootstrap.Modal('#myModal', { keyboard: false })
-        }
-
-        function getRandomBreedName() {
-            var breedName = breedNamesList[Math.floor(Math.random() * breedNamesList.length)];
-            return breedName
-        }
-
-        async function imageExists(imageUrl) {
-            try {
-                const imageUrlResponse = await fetch(imageUrl)
-            }
-            catch (exception) {
-                return false;
-            }
-            return true
-        }
-
-        async function getRandomImageByBreed(breed) {
-            const imagesResponse = await fetch(`https://dog.ceo/api/breed/${breed}/images/random`)
-            const imagesJson = await imagesResponse.json()
-            const imagePath = imagesJson.message
-            return imagePath
-        }
-
-        async function loadNewDog() {
-            currentHint = ''
-            document.getElementById('helperText').innerText = ''
-            breedToGuess = await getRandomBreedName().trim()
-            imageToGuess = await getRandomImageByBreed(breedToGuess)
-            if (await imageExists(imageToGuess)) {
-                document.getElementById('imageToGuess').src = imageToGuess
-            }
-            else {
-                await loadNewDog()
-            }
-        }
-
-        function msToSeconds(ms) {
-            return ms / 1000
-        }
-
-        function secondsToMs(sec) {
-            return sec * 1000
-        }
-
-        function decrementTime() {
-            timeLeft -= 1
-            document.getElementById('timeLeft').innerText = "Time Left: " + timeLeft
-        }
-
-        async function startGame() {
-            myModal.hide()
-            score = 0
-            timeLeft = duration
-            document.getElementById('actionsBeforePlayingRow').style.display = 'none'
-            document.getElementById('actionsWhilePlayingRow').style.display = 'flex'
-            document.getElementById('score').innerText = "Score: " + score
-            document.getElementById('timeLeft').innerText = "Time Left: " + timeLeft
-            gameStarted = true
-            const startButtons = document.getElementsByClassName("startButton")
-            for (let i = 0; i < startButtons.length; i++) {
-                startButtons[i].disabled = true
-            }
-            await loadNewDog()
-            document.getElementById("imageToGuess").style.display = 'inline'
-            const interval = setInterval(function () {
-                decrementTime()
-                if (timeLeft === 0) {
-                    clearInterval(interval)
-                    document.getElementById("finalScoreMessage").innerText = 'Final score: ' + score
-                    myModal.show()
-                }
-            }, secondsToMs(1))
-        }
-
-        async function pass() {
-            await loadNewDog()
-        }
-
-        function showHint() {
-            const randomHintType = hintTypes[Math.floor(Math.random() * hintTypes.length)];
-            if (randomHintType === currentHint) {
-                showHint()
-            }
-            else {
-                currentHint = randomHintType
-                const hintObject = hintTypeDataObjects[randomHintType]
-                document.getElementById("helperText").textContent = hintObject.message + `"${hintObject.getHint(breedToGuess)}"`
-            }
-
-        }
-
-        async function guessBreed() {
-            const currentBreedGuess = document.getElementById('guessDogBreedInput').value.trim().toLowerCase()
-            if (currentBreedGuess === breedToGuess) {
-                document.getElementById('helperText').innerText = ''
-                score++
-                document.getElementById('score').innerText = "Score: " + score
-                await loadNewDog()
-            }
-            else if (currentBreedGuess.includes(breedToGuess) || breedToGuess.includes(currentBreedGuess)) {
-                document.getElementById('helperText').innerText = 'You are warm, keep guessing!'
-            }
-            else {
-                document.getElementById('helperText').innerText = 'Cold, try again!'
-            }
-        }
-    </script>
+    <link rel="stylesheet" type="text/css" href="styles.css" />
+    <script src="script.js"></script>
 </head>
 
 <body>
     <div id="mainContainer" class="container-fluid mx-auto p-2 text-center">
-        <h1 id="title">Guess My Breed <img id="logo" class="img-fluid" src="paw.png" /></h1>
+        <div class="row">
+            <div class="col">
+                <h1 id="title">Guess My Breed <img id="logo" class="img-fluid" src="paw.png" />
+                </h1>
+            </div>
+        </div>
         <div class="row">
             <div class="col">
                 <p id="score">Score: 0</p>
@@ -209,7 +31,7 @@
         </div>
         <img id="imageToGuess" src="" alt="dog image goes here" class="img-fluid" />
         <p id="helperText"></p>
-        <div id="inputsContainer" class="container-fluid">
+        <div id="inputsContainer" class="container-fluid mx-auto p-2 text-center">
             <div class="row">
                 <div class="col">
                     <label id="guessDogBreedInputLabel" for="guessDogBreedInput">Guess dog breed and click guess
@@ -220,22 +42,22 @@
             </div>
             <div id="actionsBeforePlayingRow" class="row">
                 <div class="col">
-                    <button id="startButton1" type="button" class="btn btn-primary startButton"
+                    <button id="startButton1" type="button" class="btn btn-success startButton"
                         onclick="startGame()">Start</button>
                 </div>
             </div>
-            <div id="actionsWhilePlayingRow" class="row">
-                <div class="col-3">
+            <div id="actionsWhilePlayingRow" class="row gy-2">
+                <div class="col">
                     <button id="guessButton" type="button" class="btn btn-primary" onclick="guessBreed()">Guess</button>
                 </div>
-                <div class="col-3">
-                    <button id="passButton" type="button" class="btn btn-primary" onclick="pass()">Pass</button>
+                <div class="col">
+                    <button id="passButton" type="button" class="btn btn-secondary" onclick="pass()">Pass</button>
                 </div>
-                <div class="col-3">
-                    <button id="Hint" type="button" class="btn btn-primary" onclick="showHint()">Hint</button>
+                <div class="col">
+                    <button id="Hint" type="button" class="btn btn-info" onclick="showHint()">Hint</button>
                 </div>
-                <div class="col-3">
-                    <button id="startButton2" type="button" class="btn btn-primary startButton"
+                <div class="col">
+                    <button id="startButton2" type="button" class="btn btn-success startButton"
                         onclick="startGame()">Start</button>
                 </div>
             </div>

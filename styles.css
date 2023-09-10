@@ -1,0 +1,42 @@
+#title {
+    text-align: center;
+    margin-top: 10px;
+}
+
+#imageToGuess {
+    display: none;
+    height: 300px;
+}
+
+#logo {
+    height: 40px;
+}
+
+#guessDogBreedInput {
+    margin-bottom: 20px;
+}
+
+#mainContainer {
+    width: 75%;
+}
+
+#guessDogBreedInputLabel {
+    font-style: italic;
+}
+
+#inputsContainer {
+    position: fixed;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 80%;
+    margin-bottom: 20px;
+}
+
+#actionsWhilePlayingRow {
+    display: none;
+}
+
+#helperText {
+    margin-top: 20px;
+}
