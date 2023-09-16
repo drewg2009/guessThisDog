@@ -1,186 +1,177 @@
+'use client'
+
 import Image from 'next/image'
+import { Navbar } from 'react-bootstrap'
+import GameNavbar from './gameNavbar'
+import GameModal from './gameModal'
+import 'bootstrap/dist/css/bootstrap.min.css';
 
 export default function Home() {
 
+// let breedNamesList: Array<string> = []
+// const hintTypes = ['first3Letters', 'last3Letters']
+// const hintTypeDataObjects = {
+//     'first3Letters': {
+//         message: 'Hint: The first 3 letters are ',
+//         getHint: function (str: string) {
+//             return str.substring(0, 3)
+//         }
+//     },
+//     'last3Letters': {
+//         message: 'Hint: The last 3 letters are ',
+//         getHint: function (str: string) {
+//             return str.substring(str.length - 3, str.length)
+//         }
+//     }
+// }
+// let currentHint: string;
+// let breedToGuess;
+// let imageToGuess;
+// let gameStarted = false
+// let isGuessing = false
+// let score;
+// const duration = 30
+// let gameOverModal;
+// let zoomModalElement;
+// let zoomModal;
+// let gameInterval;
 
-let breedNamesList: Array<string> = []
-const hintTypes = ['first3Letters', 'last3Letters']
-const hintTypeDataObjects = {
-    'first3Letters': {
-        message: 'Hint: The first 3 letters are ',
-        getHint: function (str: string) {
-            return str.substring(0, 3)
-        }
-    },
-    'last3Letters': {
-        message: 'Hint: The last 3 letters are ',
-        getHint: function (str: string) {
-            return str.substring(str.length - 3, str.length)
-        }
-    }
-}
-let currentHint: string;
-let breedToGuess;
-let imageToGuess;
-let gameStarted = false
-let isGuessing = false
-let score;
-const duration = 30
-let gameOverModal;
-let zoomModalElement;
-let zoomModal;
-let gameInterval;
 
+// window.onload = init()
 
-window.onload = init()
+// async function init() {
+//     const breedsResponse = await fetch('https://dog.ceo/api/breeds/list/all')
+//     breedsJson = await breedsResponse.json()
+//     breedNamesList = Object.keys(breedsJson.message)
+//     gameOverModal = new bootstrap.Modal('#gameOverModal', { keyboard: false })
+//     zoomModalElement = document.getElementById('zoomModal')
+//     zoomModal = new bootstrap.Modal(zoomModalElement)
+// }
 
-async function init() {
-    const breedsResponse = await fetch('https://dog.ceo/api/breeds/list/all')
-    breedsJson = await breedsResponse.json()
-    breedNamesList = Object.keys(breedsJson.message)
-    gameOverModal = new bootstrap.Modal('#gameOverModal', { keyboard: false })
-    zoomModalElement = document.getElementById('zoomModal')
-    zoomModal = new bootstrap.Modal(zoomModalElement)
-}
+// function getRandomBreedName() {
+//     var breedName = breedNamesList[Math.floor(Math.random() * breedNamesList.length)];
+//     return breedName
+// }
 
-function getRandomBreedName() {
-    var breedName = breedNamesList[Math.floor(Math.random() * breedNamesList.length)];
-    return breedName
-}
+// async function imageExists(imageUrl:string) {
+//     try {
+//         const imageUrlResponse = await fetch(imageUrl)
+//     }
+//     catch (exception) {
+//         return false;
+//     }
+//     return true
+// }
 
-async function imageExists(imageUrl:string) {
-    try {
-        const imageUrlResponse = await fetch(imageUrl)
-    }
-    catch (exception) {
-        return false;
-    }
-    return true
-}
+// async function getRandomImageByBreed(breed) {
+//     const imagesResponse = await fetch(`https://dog.ceo/api/breed/${breed}/images/random`)
+//     const imagesJson = await imagesResponse.json()
+//     const imagePath = imagesJson.message
+//     return imagePath
+// }
 
-async function getRandomImageByBreed(breed) {
-    const imagesResponse = await fetch(`https://dog.ceo/api/breed/${breed}/images/random`)
-    const imagesJson = await imagesResponse.json()
-    const imagePath = imagesJson.message
-    return imagePath
-}
+// async function loadNewDog() {
+//     currentHint = ''
+//     breedToGuess = await getRandomBreedName().trim()
+//     imageToGuess = await getRandomImageByBreed(breedToGuess)
+//     if (await imageExists(imageToGuess)) {
+//         document.getElementById('imageToGuess').src = imageToGuess
+//     }
+//     else {
+//         await loadNewDog()
+//     }
+// }
 
-async function loadNewDog() {
-    currentHint = ''
-    breedToGuess = await getRandomBreedName().trim()
-    imageToGuess = await getRandomImageByBreed(breedToGuess)
-    if (await imageExists(imageToGuess)) {
-        document.getElementById('imageToGuess').src = imageToGuess
-    }
-    else {
-        await loadNewDog()
-    }
-}
+// function msToSeconds(ms) {
+//     return ms / 1000
+// }
 
-function msToSeconds(ms) {
-    return ms / 1000
-}
+// function secondsToMs(sec) {
+//     return sec * 1000
+// }
 
-function secondsToMs(sec) {
-    return sec * 1000
-}
+// function decrementTime() {
+//     timeLeft -= 1
+//     document.getElementById('timeLeft').innerText = "Time Left: " + timeLeft
+// }
 
-function decrementTime() {
-    timeLeft -= 1
-    document.getElementById('timeLeft').innerText = "Time Left: " + timeLeft
-}
+// async function startGame() {
+//     gameOverModal.hide()
+//     score = 0
+//     timeLeft = duration
+//     document.getElementById('actionsBeforePlayingRow').style.display = 'none'
+//     document.getElementById('actionsWhilePlayingRow').style.display = 'flex'
+//     document.getElementById('score').innerText = "Score: " + score
+//     document.getElementById('timeLeft').innerText = "Time Left: " + timeLeft
+//     gameStarted = true
+//     const startButtons = document.getElementsByClassName("startButton")
+//     for (let i = 0; i < startButtons.length; i++) {
+//         startButtons[i].disabled = true
+//     }
+//     await loadNewDog()
+//     document.getElementById("imageToGuess").style.display = 'inline'
+//     gameInterval = setInterval(function () {
+//         decrementTime()
+//         if (timeLeft === 0) {
+//             endGame()
+//         }
+//     }, secondsToMs(1))
+// }
 
-async function startGame() {
-    gameOverModal.hide()
-    score = 0
-    timeLeft = duration
-    document.getElementById('actionsBeforePlayingRow').style.display = 'none'
-    document.getElementById('actionsWhilePlayingRow').style.display = 'flex'
-    document.getElementById('score').innerText = "Score: " + score
-    document.getElementById('timeLeft').innerText = "Time Left: " + timeLeft
-    gameStarted = true
-    const startButtons = document.getElementsByClassName("startButton")
-    for (let i = 0; i < startButtons.length; i++) {
-        startButtons[i].disabled = true
-    }
-    await loadNewDog()
-    document.getElementById("imageToGuess").style.display = 'inline'
-    gameInterval = setInterval(function () {
-        decrementTime()
-        if (timeLeft === 0) {
-            endGame()
-        }
-    }, secondsToMs(1))
-}
+// function endGame() {
+//     clearInterval(gameInterval)
+//     document.getElementById("finalScoreMessage").innerText = 'Final score: ' + score
+//     gameOverModal.show()
+//     zoomModal.hide()
+// }
 
-function endGame() {
-    clearInterval(gameInterval)
-    document.getElementById("finalScoreMessage").innerText = 'Final score: ' + score
-    gameOverModal.show()
-    zoomModal.hide()
-}
+// async function pass() {
+//     await loadNewDog()
+//     document.getElementById('helperText').innerText = ''
+// }
 
-async function pass() {
-    await loadNewDog()
-    document.getElementById('helperText').innerText = ''
-}
+// function showHint() {
+//     const randomHintType = hintTypes[Math.floor(Math.random() * hintTypes.length)];
+//     if (randomHintType === currentHint) {
+//         showHint()
+//     }
+//     else {
+//         currentHint = randomHintType
+//         const hintObject = hintTypeDataObjects[randomHintType]
+//         document.getElementById("helperText").textContent = hintObject.message + `"${hintObject.getHint(breedToGuess)}"`
+//     }
 
-function showHint() {
-    const randomHintType = hintTypes[Math.floor(Math.random() * hintTypes.length)];
-    if (randomHintType === currentHint) {
-        showHint()
-    }
-    else {
-        currentHint = randomHintType
-        const hintObject = hintTypeDataObjects[randomHintType]
-        document.getElementById("helperText").textContent = hintObject.message + `"${hintObject.getHint(breedToGuess)}"`
-    }
+// }
 
-}
+// async function guessBreed() {
+//     const currentBreedGuess = document.getElementById('guessDogBreedInput').value.trim().toLowerCase()
+//     if (currentBreedGuess === breedToGuess) {
+//         document.getElementById('helperText').innerText = 'Correct, nice job!'
+//         setTimeout(function() {
+//             document.getElementById('helperText').innerText = ''
+//         }, secondsToMs(1));
+//         score++
+//         document.getElementById('score').innerText = "Score: " + score
+//         await loadNewDog()
+//     }
+//     else if (currentBreedGuess.includes(breedToGuess) || breedToGuess.includes(currentBreedGuess)) {
+//         document.getElementById('helperText').innerText = 'You are warm, keep guessing!'
+//     }
+//     else {
+//         document.getElementById('helperText').innerText = 'Cold, try again!'
+//     }
+// }
 
-async function guessBreed() {
-    const currentBreedGuess = document.getElementById('guessDogBreedInput').value.trim().toLowerCase()
-    if (currentBreedGuess === breedToGuess) {
-        document.getElementById('helperText').innerText = 'Correct, nice job!'
-        setTimeout(function() {
-            document.getElementById('helperText').innerText = ''
-        }, secondsToMs(1));
-        score++
-        document.getElementById('score').innerText = "Score: " + score
-        await loadNewDog()
-    }
-    else if (currentBreedGuess.includes(breedToGuess) || breedToGuess.includes(currentBreedGuess)) {
-        document.getElementById('helperText').innerText = 'You are warm, keep guessing!'
-    }
-    else {
-        document.getElementById('helperText').innerText = 'Cold, try again!'
-    }
-}
-
-function zoom() {
-    document.getElementById("zoomedImage").src = imageToGuess
-    zoomModal.show()
-}
+// function zoom() {
+//     document.getElementById("zoomedImage").src = imageToGuess
+//     zoomModal.show()
+// }
 
   return (
   <>
-        <div id="mainContainer" className="container-fluid mx-auto p-2 text-center">
-            <nav className="navbar navbar-expand-lg navbar-light bg-light">
-                <div className="container-fluid">
-                    <a className="navbar-brand" href="#">Guess My Breed <img id="logo" src="paw.png" /></a>
-                    <button className="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-                      <span className="navbar-toggler-icon"></span>
-                    </button>
-                    <div className="collapse navbar-collapse" id="navbarSupportedContent">
-                      <ul className="navbar-nav me-auto mb-2 mb-lg-0">
-                        <li className="nav-item">
-                          <a className="nav-link active" href="https://www.linkedin.com/in/drew-gallagher-945417a1/">Meet The Developer</a>
-                        </li>
-                      </ul>
-                    </div>
-                </div>
-            </nav>
-            <div className="row">
+        {/* <div id="mainContainer" className="container-fluid mx-auto p-2 text-center"> */}
+            <GameNavbar />
+            {/* <div className="row">
                 <div className="col">
                     <p id="score">Score: 0</p>
                 </div>
@@ -226,37 +217,10 @@ function zoom() {
                         <button id="zoom" type="button" className="btn btn-light fs-4" onClick="zoom()">Zoom</button>
                     </div>
                 </div>
-            </div>
-        </div>
-        <div id="gameOverModal" className="modal" tabindex="-1">
-            <div className="modal-dialog">
-                <div className="modal-content">
-                    <div className="modal-header">
-                        <h5 className="modal-title">Game Over!</h5>
-                        <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                    </div>
-                    <div className="modal-body">
-                        <p id="finalScoreMessage"></p>
-                    </div>
-                    <div className="modal-footer">
-                        <button type="button" className="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                        <button type="button" className="btn btn-primary" onClick="startGame()">Play Again!</button>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div id="zoomModal" className="modal" tabindex="-1">
-            <div className="modal-dialog modal-fullscreen">
-                <div className="modal-content">
-                    <div className="modal-body">
-                        <img id="zoomedImage" />
-                    </div>
-                    <div className="modal-footer">
-                        <button type="button" className="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    </div>
-                </div>
-            </div>
-        </div>
+            </div> */}
+        {/* </div> */}
+        <GameModal />
+
 </>
   )
 }
