@@ -1,113 +1,262 @@
 import Image from 'next/image'
 
 export default function Home() {
+
+
+let breedNamesList: Array<string> = []
+const hintTypes = ['first3Letters', 'last3Letters']
+const hintTypeDataObjects = {
+    'first3Letters': {
+        message: 'Hint: The first 3 letters are ',
+        getHint: function (str: string) {
+            return str.substring(0, 3)
+        }
+    },
+    'last3Letters': {
+        message: 'Hint: The last 3 letters are ',
+        getHint: function (str: string) {
+            return str.substring(str.length - 3, str.length)
+        }
+    }
+}
+let currentHint: string;
+let breedToGuess;
+let imageToGuess;
+let gameStarted = false
+let isGuessing = false
+let score;
+const duration = 30
+let gameOverModal;
+let zoomModalElement;
+let zoomModal;
+let gameInterval;
+
+
+window.onload = init()
+
+async function init() {
+    const breedsResponse = await fetch('https://dog.ceo/api/breeds/list/all')
+    breedsJson = await breedsResponse.json()
+    breedNamesList = Object.keys(breedsJson.message)
+    gameOverModal = new bootstrap.Modal('#gameOverModal', { keyboard: false })
+    zoomModalElement = document.getElementById('zoomModal')
+    zoomModal = new bootstrap.Modal(zoomModalElement)
+}
+
+function getRandomBreedName() {
+    var breedName = breedNamesList[Math.floor(Math.random() * breedNamesList.length)];
+    return breedName
+}
+
+async function imageExists(imageUrl:string) {
+    try {
+        const imageUrlResponse = await fetch(imageUrl)
+    }
+    catch (exception) {
+        return false;
+    }
+    return true
+}
+
+async function getRandomImageByBreed(breed) {
+    const imagesResponse = await fetch(`https://dog.ceo/api/breed/${breed}/images/random`)
+    const imagesJson = await imagesResponse.json()
+    const imagePath = imagesJson.message
+    return imagePath
+}
+
+async function loadNewDog() {
+    currentHint = ''
+    breedToGuess = await getRandomBreedName().trim()
+    imageToGuess = await getRandomImageByBreed(breedToGuess)
+    if (await imageExists(imageToGuess)) {
+        document.getElementById('imageToGuess').src = imageToGuess
+    }
+    else {
+        await loadNewDog()
+    }
+}
+
+function msToSeconds(ms) {
+    return ms / 1000
+}
+
+function secondsToMs(sec) {
+    return sec * 1000
+}
+
+function decrementTime() {
+    timeLeft -= 1
+    document.getElementById('timeLeft').innerText = "Time Left: " + timeLeft
+}
+
+async function startGame() {
+    gameOverModal.hide()
+    score = 0
+    timeLeft = duration
+    document.getElementById('actionsBeforePlayingRow').style.display = 'none'
+    document.getElementById('actionsWhilePlayingRow').style.display = 'flex'
+    document.getElementById('score').innerText = "Score: " + score
+    document.getElementById('timeLeft').innerText = "Time Left: " + timeLeft
+    gameStarted = true
+    const startButtons = document.getElementsByClassName("startButton")
+    for (let i = 0; i < startButtons.length; i++) {
+        startButtons[i].disabled = true
+    }
+    await loadNewDog()
+    document.getElementById("imageToGuess").style.display = 'inline'
+    gameInterval = setInterval(function () {
+        decrementTime()
+        if (timeLeft === 0) {
+            endGame()
+        }
+    }, secondsToMs(1))
+}
+
+function endGame() {
+    clearInterval(gameInterval)
+    document.getElementById("finalScoreMessage").innerText = 'Final score: ' + score
+    gameOverModal.show()
+    zoomModal.hide()
+}
+
+async function pass() {
+    await loadNewDog()
+    document.getElementById('helperText').innerText = ''
+}
+
+function showHint() {
+    const randomHintType = hintTypes[Math.floor(Math.random() * hintTypes.length)];
+    if (randomHintType === currentHint) {
+        showHint()
+    }
+    else {
+        currentHint = randomHintType
+        const hintObject = hintTypeDataObjects[randomHintType]
+        document.getElementById("helperText").textContent = hintObject.message + `"${hintObject.getHint(breedToGuess)}"`
+    }
+
+}
+
+async function guessBreed() {
+    const currentBreedGuess = document.getElementById('guessDogBreedInput').value.trim().toLowerCase()
+    if (currentBreedGuess === breedToGuess) {
+        document.getElementById('helperText').innerText = 'Correct, nice job!'
+        setTimeout(function() {
+            document.getElementById('helperText').innerText = ''
+        }, secondsToMs(1));
+        score++
+        document.getElementById('score').innerText = "Score: " + score
+        await loadNewDog()
+    }
+    else if (currentBreedGuess.includes(breedToGuess) || breedToGuess.includes(currentBreedGuess)) {
+        document.getElementById('helperText').innerText = 'You are warm, keep guessing!'
+    }
+    else {
+        document.getElementById('helperText').innerText = 'Cold, try again!'
+    }
+}
+
+function zoom() {
+    document.getElementById("zoomedImage").src = imageToGuess
+    zoomModal.show()
+}
+
   return (
-    <main className="flex min-h-screen flex-col items-center justify-between p-24">
-      <div className="z-10 max-w-5xl w-full items-center justify-between font-mono text-sm lg:flex">
-        <p className="fixed left-0 top-0 flex w-full justify-center border-b border-gray-300 bg-gradient-to-b from-zinc-200 pb-6 pt-8 backdrop-blur-2xl dark:border-neutral-800 dark:bg-zinc-800/30 dark:from-inherit lg:static lg:w-auto  lg:rounded-xl lg:border lg:bg-gray-200 lg:p-4 lg:dark:bg-zinc-800/30">
-          Get started by editing&nbsp;
-          <code className="font-mono font-bold">app/page.tsx</code>
-        </p>
-        <div className="fixed bottom-0 left-0 flex h-48 w-full items-end justify-center bg-gradient-to-t from-white via-white dark:from-black dark:via-black lg:static lg:h-auto lg:w-auto lg:bg-none">
-          <a
-            className="pointer-events-none flex place-items-center gap-2 p-8 lg:pointer-events-auto lg:p-0"
-            href="https://vercel.com?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            By{' '}
-            <Image
-              src="/vercel.svg"
-              alt="Vercel Logo"
-              className="dark:invert"
-              width={100}
-              height={24}
-              priority
-            />
-          </a>
+  <>
+        <div id="mainContainer" className="container-fluid mx-auto p-2 text-center">
+            <nav className="navbar navbar-expand-lg navbar-light bg-light">
+                <div className="container-fluid">
+                    <a className="navbar-brand" href="#">Guess My Breed <img id="logo" src="paw.png" /></a>
+                    <button className="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                      <span className="navbar-toggler-icon"></span>
+                    </button>
+                    <div className="collapse navbar-collapse" id="navbarSupportedContent">
+                      <ul className="navbar-nav me-auto mb-2 mb-lg-0">
+                        <li className="nav-item">
+                          <a className="nav-link active" href="https://www.linkedin.com/in/drew-gallagher-945417a1/">Meet The Developer</a>
+                        </li>
+                      </ul>
+                    </div>
+                </div>
+            </nav>
+            <div className="row">
+                <div className="col">
+                    <p id="score">Score: 0</p>
+                </div>
+            </div>
+            <div className="row">
+                <div className="col">
+                    <p id="timeLeft">Time Left: 0</p>
+                </div>
+            </div>
+            <img id="imageToGuess" src="" alt="dog image goes here" className="img-fluid" />
+            <p id="helperText"></p>
+            <div id="inputsContainer" className="container-fluid mx-auto p-2 text-center">
+                <div className="row">
+                    <div className="col">
+                        <label id="guessDogBreedInputLabel" for="guessDogBreedInput">Guess dog breed and click guess
+                            button</label>
+                        <input placeholder="i.e. corgi, stbernard, hound" name="guessDogBreedInput" id="guessDogBreedInput"
+                            className="form-control" />
+                    </div>
+                </div>
+                <div id="actionsBeforePlayingRow" className="row">
+                    <div className="col">
+                        <button id="startButton1" type="button" className="btn btn-success startButton fs-4"
+                            onClick="startGame()">Start</button>
+                    </div>
+                </div>
+                <div id="actionsWhilePlayingRow" className="row gy-2">
+                    <div className="col">
+                        <button id="guessButton" type="button" className="btn btn-primary fs-4"
+                            onClick="guessBreed()">Guess</button>
+                    </div>
+                    <div className="col">
+                        <button id="passButton" type="button" className="btn btn-secondary fs-4" onClick="pass()">Pass</button>
+                    </div>
+                    <div className="col">
+                        <button id="hint" type="button" className="btn btn-info fs-4" onClick="showHint()">Hint</button>
+                    </div>
+                    <div className="col">
+                        <button id="startButton2" type="button" className="btn btn-success startButton fs-4"
+                            onClick="startGame()">Start</button>
+                    </div>
+                    <div className="col">
+                        <button id="zoom" type="button" className="btn btn-light fs-4" onClick="zoom()">Zoom</button>
+                    </div>
+                </div>
+            </div>
         </div>
-      </div>
-
-      <div className="relative flex place-items-center before:absolute before:h-[300px] before:w-[480px] before:-translate-x-1/2 before:rounded-full before:bg-gradient-radial before:from-white before:to-transparent before:blur-2xl before:content-[''] after:absolute after:-z-20 after:h-[180px] after:w-[240px] after:translate-x-1/3 after:bg-gradient-conic after:from-sky-200 after:via-blue-200 after:blur-2xl after:content-[''] before:dark:bg-gradient-to-br before:dark:from-transparent before:dark:to-blue-700 before:dark:opacity-10 after:dark:from-sky-900 after:dark:via-[#0141ff] after:dark:opacity-40 before:lg:h-[360px] z-[-1]">
-        <Image
-          className="relative dark:drop-shadow-[0_0_0.3rem_#ffffff70] dark:invert"
-          src="/next.svg"
-          alt="Next.js Logo"
-          width={180}
-          height={37}
-          priority
-        />
-      </div>
-
-      <div className="mb-32 grid text-center lg:max-w-5xl lg:w-full lg:mb-0 lg:grid-cols-4 lg:text-left">
-        <a
-          href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={`mb-3 text-2xl font-semibold`}>
-            Docs{' '}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className={`m-0 max-w-[30ch] text-sm opacity-50`}>
-            Find in-depth information about Next.js features and API.
-          </p>
-        </a>
-
-        <a
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={`mb-3 text-2xl font-semibold`}>
-            Learn{' '}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className={`m-0 max-w-[30ch] text-sm opacity-50`}>
-            Learn about Next.js in an interactive course with&nbsp;quizzes!
-          </p>
-        </a>
-
-        <a
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={`mb-3 text-2xl font-semibold`}>
-            Templates{' '}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className={`m-0 max-w-[30ch] text-sm opacity-50`}>
-            Explore the Next.js 13 playground.
-          </p>
-        </a>
-
-        <a
-          href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={`mb-3 text-2xl font-semibold`}>
-            Deploy{' '}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className={`m-0 max-w-[30ch] text-sm opacity-50`}>
-            Instantly deploy your Next.js site to a shareable URL with Vercel.
-          </p>
-        </a>
-      </div>
-    </main>
+        <div id="gameOverModal" className="modal" tabindex="-1">
+            <div className="modal-dialog">
+                <div className="modal-content">
+                    <div className="modal-header">
+                        <h5 className="modal-title">Game Over!</h5>
+                        <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div className="modal-body">
+                        <p id="finalScoreMessage"></p>
+                    </div>
+                    <div className="modal-footer">
+                        <button type="button" className="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button type="button" className="btn btn-primary" onClick="startGame()">Play Again!</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div id="zoomModal" className="modal" tabindex="-1">
+            <div className="modal-dialog modal-fullscreen">
+                <div className="modal-content">
+                    <div className="modal-body">
+                        <img id="zoomedImage" />
+                    </div>
+                    <div className="modal-footer">
+                        <button type="button" className="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+</>
   )
 }
