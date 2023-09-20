@@ -10,34 +10,38 @@
     <link rel="stylesheet" type="text/css" href="styles.css" />
     <script src="script.js"></script>
 </head>
+
 <body>
     <div id="mainContainer" class="container-fluid mx-auto p-2 text-center">
         <nav class="navbar navbar-expand-lg navbar-light bg-light">
             <div class="container-fluid">
                 <a class="navbar-brand" href="#">Guess My Breed <img id="logo" src="paw.png" /></a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-                  <span class="navbar-toggler-icon"></span>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+                    data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
+                    aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
                 </button>
                 <div class="collapse navbar-collapse" id="navbarSupportedContent">
-                  <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                    <li class="nav-item">
-                      <a class="nav-link active" href="https://www.linkedin.com/in/drew-gallagher-945417a1/">Meet The Developer</a>
-                    </li>
-                  </ul>
+                    <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                        <li class="nav-item">
+                            <a class="nav-link active" href="https://www.linkedin.com/in/drew-gallagher-945417a1/">Meet
+                                The Developer</a>
+                        </li>
+                    </ul>
                 </div>
             </div>
         </nav>
-        <div class="row">
-            <div class="col">
-                <p id="score">Score: 0</p>
+        <div id="gameDetailBox" class="row">
+            <div class="col-xs-12 col-md-6">
+                <div id="score">Score: 0</div>
+            </div>
+            <div class="col-xs-12 col-md-6">
+                <div id="timeLeft">Time Left: 0</div>
             </div>
         </div>
-        <div class="row">
-            <div class="col">
-                <p id="timeLeft">Time Left: 0</p>
-            </div>
+        <img id="breedImageElement" src="" alt="dog image goes here" class="img-fluid" />
+        <div id="spinner" class="spinner-border text-primary" role="status">
         </div>
-        <img id="imageToGuess" src="" alt="dog image goes here" class="img-fluid" />
         <p id="helperText"></p>
         <div id="inputsContainer" class="container-fluid mx-auto p-2 text-center">
             <div class="row">
@@ -75,7 +79,6 @@
             </div>
         </div>
     </div>
-    </div>
     <div id="gameOverModal" class="modal" tabindex="-1">
         <div class="modal-dialog">
             <div class="modal-content">
@@ -109,4 +112,5 @@
         integrity="sha384-HwwvtgBNo3bZJJLYd8oVXjrBZt8cqVSpeBNS5n7C8IVInixGAoxmnlMuBnhbgrkm"
         crossorigin="anonymous"></script>
 </body>
+
 </html>

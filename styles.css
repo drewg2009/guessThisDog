@@ -3,7 +3,7 @@
     margin-top: 10px;
 }
 
-#imageToGuess {
+#breedImageElement {
     display: none;
     height: 200px;
 }
@@ -21,11 +21,8 @@
 }
 
 #inputsContainer {
-    position: fixed;
+    position: relative;
     bottom: 0;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 80%;
     margin-bottom: 20px;
 }
 
@@ -34,7 +31,6 @@
 }
 
 #score {
-    margin-top: 20px;
     font-weight: bold;
 }
 
@@ -48,6 +44,12 @@
 
 #zoomedImage {
     width: 100%;
+}
+
+#gameDetailBox {
+    width: 50%;
+    margin-left: auto;
+    margin-right: auto;
 }
 
 @media only screen and (min-width: 800px) {

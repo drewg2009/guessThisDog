@@ -1,5 +1,6 @@
 
 let breedNamesList = []
+
 const hintTypes = ['first3Letters', 'last3Letters']
 const hintTypeDataObjects = {
     'first3Letters': {
@@ -15,9 +16,11 @@ const hintTypeDataObjects = {
         }
     }
 }
+
 let currentHint;
 let breedToGuess;
 let imageToGuess;
+let breedImageElement;
 let gameStarted = false
 let isGuessing = false
 let score;
@@ -26,6 +29,7 @@ let gameOverModal;
 let zoomModalElement;
 let zoomModal;
 let gameInterval;
+let spinner;
 
 
 window.onload = init()
@@ -37,6 +41,10 @@ async function init() {
     gameOverModal = new bootstrap.Modal('#gameOverModal', { keyboard: false })
     zoomModalElement = document.getElementById('zoomModal')
     zoomModal = new bootstrap.Modal(zoomModalElement)
+    spinner = document.querySelector("#spinner")
+    spinner.style.display = 'none'
+    breedImageElement = document.querySelector("#breedImageElement")
+    breedImageElement.style.visibility = 'inline-block'
 }
 
 function getRandomBreedName() {
@@ -44,32 +52,32 @@ function getRandomBreedName() {
     return breedName
 }
 
-async function imageExists(imageUrl) {
-    try {
-        const imageUrlResponse = await fetch(imageUrl)
-    }
-    catch (exception) {
-        return false;
-    }
-    return true
-}
-
 async function getRandomImageByBreed(breed) {
     const imagesResponse = await fetch(`https://dog.ceo/api/breed/${breed}/images/random`)
     const imagesJson = await imagesResponse.json()
-    const imagePath = imagesJson.message
-    return imagePath
+    if(imagesJson && imagesJson.status === 'success') {
+        const imagePath = imagesJson.message
+        return imagePath
+    }
+    else {
+        getRandomImageByBreed(breed)
+    }
 }
 
 async function loadNewDog() {
     currentHint = ''
-    breedToGuess = await getRandomBreedName().trim()
-    imageToGuess = await getRandomImageByBreed(breedToGuess)
-    if (await imageExists(imageToGuess)) {
-        document.getElementById('imageToGuess').src = imageToGuess
+    breedToGuess = getRandomBreedName().trim()
+    toggleElementDisplay(breedImageElement);
+    toggleElementDisplay(spinner)
+    try {
+        imageToGuess = await getRandomImageByBreed(breedToGuess)
+        breedImageElement.src = imageToGuess
+        toggleElementDisplay(breedImageElement);
+        toggleElementDisplay(spinner)
     }
-    else {
-        await loadNewDog()
+    catch (fetchDogException) {
+        console.error(fetchDogException);
+        loadNewDog();
     }
 }
 
@@ -100,7 +108,7 @@ async function startGame() {
         startButtons[i].disabled = true
     }
     await loadNewDog()
-    document.getElementById("imageToGuess").style.display = 'inline'
+    breedImageElement.style.display = 'inline'
     gameInterval = setInterval(function () {
         decrementTime()
         if (timeLeft === 0) {
@@ -138,7 +146,7 @@ async function guessBreed() {
     const currentBreedGuess = document.getElementById('guessDogBreedInput').value.trim().toLowerCase()
     if (currentBreedGuess === breedToGuess) {
         document.getElementById('helperText').innerText = 'Correct, nice job!'
-        setTimeout(function() {
+        setTimeout(function () {
             document.getElementById('helperText').innerText = ''
         }, secondsToMs(1));
         score++
@@ -156,4 +164,15 @@ async function guessBreed() {
 function zoom() {
     document.getElementById("zoomedImage").src = imageToGuess
     zoomModal.show()
+}
+
+function toggleElementDisplay(element) {
+    let displayStatus = element.style.display;
+
+    if (displayStatus.includes("none")) {
+        element.style.display = "inline-block"
+    }
+    else {
+        element.style.display = "none"
+    }
 }
